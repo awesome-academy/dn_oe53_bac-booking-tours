@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   before_save{email.downcase!}
 
+  has_many :bookings, dependent: :destroy
+
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i.freeze
 
   validates :name, presence: true,
@@ -25,4 +27,10 @@ class User < ApplicationRecord
   end
 
   enum role: {user: 0, admin: 1}
+
+  private
+
+  def password_validation?
+    new_record? || password_digest_changed?
+  end
 end
